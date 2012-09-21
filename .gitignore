@@ -1,0 +1,11 @@
+User-specific files
+
+*.opensdf
+*.suo
+*.user
+*.sln.docstates
+
+Others
+
+[Bb]in
+[Oo]bj
