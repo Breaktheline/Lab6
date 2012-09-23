@@ -1,6 +1,8 @@
 #ifndef H_BIG_INT
 #define H_BIG_INT
 
+#include "Common.h"
+
 class BigInt
 {
 public:
@@ -9,8 +11,13 @@ public:
 	static const int maxDigitsCount = 25000;
 	static const int maxDecDigitsCount = 100000;
 
-	int amount;
+	int size;
 	int digits[maxDigitsCount];
+
+	BigInt();
+
+	friend BigInt* operator+(BigInt const &left, BigInt const &right);
+
 private:
 	
 };

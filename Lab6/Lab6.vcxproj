@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BigInt.cpp" />
+    <ClCompile Include="BigIntTests.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="FileOperationsTests.cpp" />
     <ClCompile Include="main.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="FileOperations.h" />
     <ClInclude Include="TList.h" />
+    <ClInclude Include="UnitTestsHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

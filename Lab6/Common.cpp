@@ -5,3 +5,8 @@ const char* ErrorMessages::FILE_OPEN_ERROR = "Can't open file";
 const char* ErrorMessages::WRONG_INPUT_ERROR = "Wrong input format.";
 
 
+
+int Max( int a, int b )
+{
+	return a > b ? a : b;
+}

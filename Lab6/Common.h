@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+int Max(int a, int b);
+
 struct ErrorMessages
 {
 	static const char* MEMORY_ERROR;

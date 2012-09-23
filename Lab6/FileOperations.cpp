@@ -50,12 +50,19 @@ BigInt* FileOperations::ReadBigInt(FILE* inputFile)
 		digitPosition++;
 	}
 
-	bigInt->amount = digitPosition;
+	bigInt->size = digitPosition;
 	return bigInt;
 }
 
-void FileOperations::PrintBigInt( BigInt* bigInt )
+void FileOperations::PrintBigInt(BigInt* bigInt)
 {
+	const char format[] = "%.4d";
 
+	printf("%d",bigInt->digits[bigInt->size-1]);
+	for (int i = bigInt->size - 2; i >= 0; i--)
+	{
+		printf(format, bigInt->digits[i]);
+	}
+	printf("\n");
 }
 

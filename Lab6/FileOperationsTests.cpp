@@ -45,12 +45,20 @@ void AssertDigits(int* digits, int length, BigInt* bigInt)
 	}
 }
 
+void SetUpDigits(int* digits, int length, int* digitsToSetup) 
+{
+	for(int i = 0; i < length; i++)
+	{
+		digits[i] = digitsToSetup[i];
+	}
+}
+
 TEST(InputOutputTest, ShouldReadSimpleLongDigit)
 {
 	TList<char>* inputString = CreateInputString("1234567899876543", 16);
 	BigInt* bigInt = ReadBigInt(inputString);
 	
-	ASSERT_EQ(4, bigInt->amount);
+	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234};
 	AssertDigits(digits, 4, bigInt);
 }
@@ -60,7 +68,7 @@ TEST(InputOutputTest, ShouldReadLongDigitWithShortLastDigit)
 	TList<char>* inputString = CreateInputString("11234567899876543", 17);
 	BigInt* bigInt = ReadBigInt(inputString);
 
-	ASSERT_EQ(5, bigInt->amount);
+	ASSERT_EQ(5, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234, 1};
 	AssertDigits(digits, 5, bigInt);
 }
@@ -70,7 +78,7 @@ TEST(InputOutputTest, ShouldReadLongDigitWithFirstZeros)
 	TList<char>* inputString = CreateInputString("0000001234567899876543", 22);
 	BigInt* bigInt = ReadBigInt(inputString);
 
-	ASSERT_EQ(4, bigInt->amount);
+	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234};
 	AssertDigits(digits, 4, bigInt);
 }
@@ -80,7 +88,30 @@ TEST(InputOutputTest, ShouldReadLongDigitWithZerosInTheMiddle)
 	TList<char>* inputString = CreateInputString("000100000090070043", 18);
 	BigInt* bigInt = ReadBigInt(inputString);
 
-	ASSERT_EQ(4, bigInt->amount);
+	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {43, 9007, 0, 100};
 	AssertDigits(digits, 4, bigInt);
+}
+
+
+TEST(InputOutputTest, ShouldPrintLongDigitWithZerosInside)
+{
+	BigInt bigInt;
+	bigInt.size = 5;
+	int digits[] = {43, 9007, 0, 100, 23};
+	SetUpDigits(bigInt.digits, 5, digits);
+
+	FileOperations operations;
+	operations.PrintBigInt(&bigInt);
+}
+
+TEST(InputOutputTest, ShouldPrintLongDigitOne)
+{
+	BigInt bigInt;
+	bigInt.size = 1;
+	int digits[] = {43};
+	SetUpDigits(bigInt.digits, 1, digits);
+
+	FileOperations operations;
+	operations.PrintBigInt(&bigInt);
 }
