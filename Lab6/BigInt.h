@@ -16,10 +16,12 @@ public:
 
 	BigInt();
 
-	friend BigInt* operator+(BigInt const &left, BigInt const &right);
+	friend BigInt* operator + (const BigInt &left, const BigInt &right);
+	friend bool operator == (const BigInt &left, const BigInt &right);
+	friend bool operator > (const BigInt &left, const BigInt &right);
+	friend bool operator < (const BigInt &left, const BigInt &right);
+	friend BigInt* operator - (const BigInt &left, const BigInt &right);
 
-private:
-	
 };
 
 #endif

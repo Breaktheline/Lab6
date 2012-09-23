@@ -94,3 +94,156 @@ TEST(AdditionTest, ShouldAddIfDigitsHasNoRemainders)
 	int expect[] = {444, 243, 2};
 	UnitTestsHelper::AssertDigits(expect, result);
 }
+
+TEST(CompareTest, CompareIfDigitsAreEquals)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 2;
+
+	int leftDigits[] = {123, 45};
+	int rightDigits[] = {123, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	ASSERT_EQ(true, left == right);
+	ASSERT_EQ(false, left > right);
+	ASSERT_EQ(false, left < right);
+}
+
+TEST(CompareTest, CompareIfDigitsHasDiffSizes)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 3;
+
+	int leftDigits[] = {123, 45};
+	int rightDigits[] = {123, 45, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	ASSERT_EQ(false, left == right);
+	ASSERT_EQ(false, left > right);
+	ASSERT_EQ(true, left < right);
+}
+
+TEST(CompareTest, CompareIfLeftDigitGreater)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {23, 45, 45};
+	int rightDigits[] = {123, 45, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	ASSERT_EQ(false, left == right);
+	ASSERT_EQ(false, left > right);
+	ASSERT_EQ(true, left < right);
+}
+
+TEST(CompareTest, CompareIfLeftDigitLess)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {23, 45, 46};
+	int rightDigits[] = {123, 45, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	ASSERT_EQ(false, left == right);
+	ASSERT_EQ(true, left > right);
+	ASSERT_EQ(false, left < right);
+}
+
+TEST(SubtractionTest, CanSubtructIfEquals)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {123, 45, 46};
+	int rightDigits[] = {123, 45, 46};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left - right;
+
+	ASSERT_EQ(0, result->size);
+}
+
+TEST(SubtractionTest, NotSubtructIfLeftDigitLess)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {23, 45, 46};
+	int rightDigits[] = {123, 45, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	try
+	{
+		BigInt* result = left - right;
+	}
+	catch (AppException* e)
+	{
+		ASSERT_EQ("Error", e->GetMessage());
+	}
+}
+
+TEST(SubtractionTest, SubtructIfLeftDigitGreaterAndNoRemainder)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {224, 67, 46};
+	int rightDigits[] = {123, 45, 45};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left - right;
+	int digits[] = {101, 22, 1};
+
+	ASSERT_EQ(3, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+
+}
+
+TEST(SubtractionTest, SubtructIfLeftDigitGreaterAndHasRemainder)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 2;
+
+	int leftDigits[] = {1998, 0, 10};
+	int rightDigits[] = {4567, 123};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left - right;
+	int digits[] = {7431, 9876, 9};
+
+	ASSERT_EQ(3, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(SubtractionTest, SubtructIfResultSizeIsLess)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 2;
+
+	int leftDigits[] = {198, 0, 1};
+	int rightDigits[] = {4567, 123};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left - right;
+	int digits[] = {5631, 9876};
+
+	ASSERT_EQ(2, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+

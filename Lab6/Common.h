@@ -7,6 +7,7 @@ int Max(int a, int b);
 
 struct ErrorMessages
 {
+	static const char* ERROR;
 	static const char* MEMORY_ERROR;
 	static const char* FILE_OPEN_ERROR;
 	static const char* WRONG_INPUT_ERROR;
