@@ -179,7 +179,7 @@ TEST(SubtractionTest, NotSubtructIfLeftDigitLess)
 	left.size = 3;
 	right.size = 3;
 
-	int leftDigits[] = {23, 45, 46};
+	int leftDigits[] = {23, 45, 40};
 	int rightDigits[] = {123, 45, 45};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
@@ -188,9 +188,9 @@ TEST(SubtractionTest, NotSubtructIfLeftDigitLess)
 	{
 		BigInt* result = left - right;
 	}
-	catch (AppException* e)
+	catch (AppException e)
 	{
-		ASSERT_EQ("Error", e->GetMessage());
+		ASSERT_EQ("Error", e.GetMessage());
 	}
 }
 
@@ -319,4 +319,129 @@ TEST(MultiplicationTest, MultiplyIfOneMultIsZero)
 
 	ASSERT_EQ(1, result->size);
 	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(ShortMultiplicationTest, MultiplyIfShort)
+{
+	BigInt left;
+	left.size = 3;
+
+	int leftDigits[] = {33, 12, 1};
+	SetDigits(&left, leftDigits);
+
+	BigInt* result = left * 45678;
+	int digits[] = {7374, 8286, 5732, 4};
+
+	ASSERT_EQ(4, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, DivideIfDividentIsLessThanDivisor)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 3;
+
+	int leftDigits[] = {123, 45};
+	int rightDigits[] = {123, 45, 6};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left / right;
+	int digits[] = {0};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, DivideIfDividentAndDivisorAreEquals)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {123, 45, 6};
+	int rightDigits[] = {123, 45, 6};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left / right;
+	int digits[] = {1};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, DivideIfDivisorIsShort)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 1;
+
+	int leftDigits[] = {123, 45, 6};
+	int rightDigits[] = {123};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left / right;
+	int digits[] = {1708, 488};
+
+	ASSERT_EQ(2, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, DivideIfDivisorIsLong)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 2;
+
+	int leftDigits[] = {123, 45, 6};
+	int rightDigits[] = {123, 88};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left / right;
+	int digits[] = {682};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, DivideIfDivisionResultIsLong)
+{
+	BigInt left, right;
+	left.size = 4;
+	right.size = 2;
+
+	int leftDigits[] = {123, 45, 678, 999};
+	int rightDigits[] = {123, 88};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left / right;
+	int digits[] = {5656, 3514, 11};
+
+	ASSERT_EQ(3, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(DivisionTest, NotDivideIfDivisorIsZero)
+{
+	BigInt left, right;
+	left.size = 4;
+	right.size = 1;
+
+	int leftDigits[] = {123, 45, 678, 999};
+	int rightDigits[] = {0};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	try
+	{
+		BigInt* result = left / right;
+	}
+	catch (AppException e)
+	{
+		ASSERT_EQ("Error", e.GetMessage());
+	}
 }

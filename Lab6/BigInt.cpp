@@ -10,6 +10,11 @@ BigInt::BigInt()
 	size = 0;
 }
 
+bool BigInt::IsZero(const BigInt &digit)
+{
+	return digit.size == 1 && digit.digits[0] == 0;
+}
+
 BigInt* operator+(const BigInt &left, const BigInt &right)
 {
 	BigInt* result = new BigInt();
@@ -156,3 +161,94 @@ BigInt* operator*(const BigInt &left, const BigInt &right)
 
 	return result;
 }
+
+BigInt* operator*(const BigInt &left, int right)
+{
+	BigInt* result = new BigInt();
+
+	int carry = 0;
+	//Умножаем короткое на каждую "цифру" первого числа с учетом переноса
+	for (int i = 0; i < left.size || carry > 0; i++)
+	{
+		// предыдущее значение в ячейке + произведение чисел + перенос от прошлого произведения
+		int mult = left.digits[i] * right + carry;
+		carry = mult / BigInt::base;
+		//вычитаем от произведение перенос
+		result->digits[i] = mult - carry*BigInt::base;
+	}
+
+	//Вычисляем размер получившегося числа
+	int size = left.size + 1;
+	while (size > 1 && result->digits[size-1] == 0)
+	{
+		size--;
+	}
+
+	result->size = size;
+
+	return result;
+}
+
+int FindDivisor(BigInt &divident, const BigInt &divisor)
+{
+	int left = 0;
+	int right = BigInt::base;
+	int half = 0;
+	BigInt mult;
+
+	while (left <= right)
+	{
+		half = (left + right) / 2;
+		mult = *(divisor * half);
+		if (mult > divident)
+		{
+			right = half - 1;
+		}
+		else
+		{
+			left = half + 1;
+		}
+	}
+
+	half = (left + right) / 2;
+	mult = *(divisor * half);
+	divident = *(divident - mult);
+
+	return half;
+}
+
+BigInt* operator/(const BigInt &left, const BigInt &right)
+{
+	if (BigInt::IsZero(right))
+	{
+		throw AppException(ErrorMessages::ERROR);
+	}
+
+	BigInt* result = new BigInt();
+	BigInt divident;
+	//Движемся с начала числа
+	for (int i = left.size - 1; i >= 0; i--)
+	{
+		//Умножаем делимое на основание, сдвигая число
+		for(int j = divident.size; j > 0; j--)
+		{
+			divident.digits[j] = divident.digits[j-1];
+		}
+		//Прибавляем следующую "цифру" к делимому
+		divident.digits[0] = left.digits[i];
+		divident.size++;
+
+		result->digits[i] = FindDivisor(divident, right);
+	}
+
+	// избавляемся от лишних нулей
+	int size = left.size;
+	while (size > 1 && result->digits[size-1] == 0)
+	{
+		size--;
+	}
+	result->size = size;
+
+	return result;
+}
+
