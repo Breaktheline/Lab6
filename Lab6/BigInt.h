@@ -15,6 +15,7 @@ public:
 	int digits[maxDigitsCount];
 
 	BigInt();
+	BigInt(int digit);
 	static bool IsZero(const BigInt &digit);
 
 	friend BigInt* operator + (const BigInt &left, const BigInt &right);
@@ -25,6 +26,7 @@ public:
 	friend BigInt* operator * (const BigInt &left, const BigInt &right);
 	friend BigInt* operator * (const BigInt &left, int right);
 	friend BigInt* operator / (const BigInt &left, const BigInt &right);
+	friend BigInt* operator ^ (const BigInt &left, const BigInt &right);
 };
 
 #endif

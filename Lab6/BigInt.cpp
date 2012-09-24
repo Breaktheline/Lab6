@@ -10,6 +10,17 @@ BigInt::BigInt()
 	size = 0;
 }
 
+BigInt::BigInt(int digit)
+{
+	digits[0] = digit;
+	for(int i = 1; i < BigInt::maxDigitsCount; i++)
+	{
+		digits[i] = 0;
+	}
+
+	size = 1;
+}
+
 bool BigInt::IsZero(const BigInt &digit)
 {
 	return digit.size == 1 && digit.digits[0] == 0;
@@ -19,22 +30,22 @@ BigInt* operator+(const BigInt &left, const BigInt &right)
 {
 	BigInt* result = new BigInt();
 	int maxAmount = Max(left.size, right.size);
-	int remainder = 0;
+	int carry = 0;
 
-	for (int i = 0; i < maxAmount + remainder; i++)
+	for (int i = 0; i < maxAmount + carry; i++)
 	{
-		int sum = left.digits[i] + right.digits[i] + remainder;
+		int sum = left.digits[i] + right.digits[i] + carry;
 
 		//≈сли результат операции сложени€ больше основани€, будет остаток
 		if (sum >= BigInt::base)
 		{
 			result->digits[i] = sum - BigInt::base;
-			remainder = 1;
+			carry = 1;
 		}
 		else
 		{
 			result->digits[i] = sum;
-			remainder = 0;
+			carry = 0;
 		}
 	}
 
@@ -105,19 +116,19 @@ BigInt* operator-(const BigInt &left, const BigInt &right)
 	}
 
 	BigInt* result = new BigInt();
-	int remainder = 0;
+	int carry = 0;
 	for(int i = 0; i < left.size; i++)
 	{
-		int subtraction = left.digits[i] - right.digits[i] - remainder;
+		int subtraction = left.digits[i] - right.digits[i] - carry;
 		if (subtraction >= 0)
 		{
 			result->digits[i] = subtraction;
-			remainder = 0;
+			carry = 0;
 		}
 		else
 		{
 			result->digits[i] = BigInt::base + subtraction;
-			remainder = 1;
+			carry = 1;
 		}
 	}
 
@@ -194,13 +205,13 @@ int FindDivisor(BigInt &divident, const BigInt &divisor)
 	int left = 0;
 	int right = BigInt::base;
 	int half = 0;
-	BigInt mult;
+	BigInt* mult;
 
 	while (left <= right)
 	{
 		half = (left + right) / 2;
-		mult = *(divisor * half);
-		if (mult > divident)
+		mult = divisor * half;
+		if (*mult > divident)
 		{
 			right = half - 1;
 		}
@@ -208,12 +219,14 @@ int FindDivisor(BigInt &divident, const BigInt &divisor)
 		{
 			left = half + 1;
 		}
+		delete mult;
 	}
 
 	half = (left + right) / 2;
-	mult = *(divisor * half);
-	divident = *(divident - mult);
+	mult = divisor * half;
 
+	divident = *(divident - *mult);
+	delete mult;
 	return half;
 }
 
@@ -252,3 +265,39 @@ BigInt* operator/(const BigInt &left, const BigInt &right)
 	return result;
 }
 
+BigInt* operator^(const BigInt &left, const BigInt &power)
+{
+	if (BigInt::IsZero(power))
+	{
+		if (BigInt::IsZero(left))
+		{
+			throw AppException(ErrorMessages::ERROR);
+		}
+
+		return new BigInt(1);
+	}
+
+	BigInt* result = new BigInt(1);
+
+	BigInt n = power;
+	BigInt digit = left;
+	BigInt zero(0);
+	while (1)
+	{
+		//≈сли число нечетное, то умножаем на число.
+		if (n.digits[0] & 1)
+		{
+			result = *result * digit;
+		}
+		n = *(n / 2);
+
+		if (BigInt::IsZero(n))
+		{
+			break;
+		}
+
+		digit = *(digit * digit);
+	}
+
+	return result;
+}

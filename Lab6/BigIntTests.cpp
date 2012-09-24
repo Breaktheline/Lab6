@@ -445,3 +445,54 @@ TEST(DivisionTest, NotDivideIfDivisorIsZero)
 		ASSERT_EQ("Error", e.GetMessage());
 	}
 }
+
+TEST(DivisionTest, DivideIfDividentIsZero)
+{
+	BigInt left, right;
+	left.size = 1;
+	right.size = 4;
+
+	int leftDigits[] = {0};
+	int rightDigits[] = {123, 45, 678, 999};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	BigInt* result = left / right;
+	int digits[] = {0};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(PowerTest, PowerIfPowerIsShort)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 1;
+
+	int leftDigits[] = {123, 4};
+	int rightDigits[] = {5};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	BigInt* result = left ^ right;
+	int digits[] = {6843, 8125, 6774, 2379, 8411, 1039};
+
+	ASSERT_EQ(6, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(PowerTest, PowerIfPowerIsZero)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 1;
+
+	int leftDigits[] = {2};
+	int rightDigits[] = {0};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	BigInt* result = left ^ right;
+	int digits[] = {1};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
