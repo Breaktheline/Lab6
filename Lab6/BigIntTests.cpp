@@ -167,8 +167,10 @@ TEST(SubtractionTest, CanSubtructIfEquals)
 	SetDigits(&right, rightDigits);
 
 	BigInt* result = left - right;
+	int digits[] = {0};
 
-	ASSERT_EQ(0, result->size);
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
 }
 
 TEST(SubtractionTest, NotSubtructIfLeftDigitLess)
@@ -247,3 +249,74 @@ TEST(SubtractionTest, SubtructIfResultSizeIsLess)
 	UnitTestsHelper::AssertDigits(digits, result);
 }
 
+TEST(MultiplicationTest, MultiplyIfMultsHasSameSizeAndNoCarry)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {33, 12, 1};
+	int rightDigits[] = {44, 13, 5};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left * right;
+	int digits[] = {1452, 957, 365, 73, 5};
+
+	ASSERT_EQ(5, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(MultiplicationTest, MultiplyIfMultsHasSameSizeAndCarry)
+{
+	BigInt left, right;
+	left.size = 3;
+	right.size = 3;
+
+	int leftDigits[] = {333, 125, 167};
+	int rightDigits[] = {443, 135, 589};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left * right;
+	int digits[] = {7519, 344, 7003, 6198, 8372, 9};
+
+	ASSERT_EQ(6, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(MultiplicationTest, MultiplyIfMultsHasDiffSize)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 5;
+
+	int leftDigits[] = {333, 125};
+	int rightDigits[] = {443, 135, 589, 0, 327};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left * right;
+	int digits[] = {7519, 344, 3022, 3646, 8898, 885, 4};
+
+	ASSERT_EQ(7, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(MultiplicationTest, MultiplyIfOneMultIsZero)
+{
+	BigInt left, right;
+	left.size = 1;
+	right.size = 5;
+
+	int leftDigits[] = {0};
+	int rightDigits[] = {443, 135, 589, 0, 327};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+
+	BigInt* result = left * right;
+	int digits[] = {0};
+
+	ASSERT_EQ(1, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}

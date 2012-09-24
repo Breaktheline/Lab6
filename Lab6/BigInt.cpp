@@ -117,11 +117,42 @@ BigInt* operator-(const BigInt &left, const BigInt &right)
 	}
 
 	int size = left.size;
-	while(result->digits[size-1] <= 0 && size > 0)
+	while(size > 1 && result->digits[size-1] == 0)
 	{
 		size--;
 	}
 
 	result->size = size;
+	return result;
+}
+
+BigInt* operator*(const BigInt &left, const BigInt &right)
+{
+	BigInt* result = new BigInt();
+
+	//Идем последовательно по каждой "цифре" второго числа
+	for (int i = 0; i < right.size; i++)
+	{
+		int carry = 0;
+		//Умножаем на каждую "цифру" первого числа с учетом переноса
+		for (int j = 0; j < left.size || carry > 0; j++)
+		{
+			// предыдущее значение в ячейке + произведение чисел + перенос от прошлого произведения
+			int mult = result->digits[i+j] + left.digits[j] * right.digits[i] + carry;
+			carry = mult / BigInt::base;
+			//вычитаем от произведение перенос
+			result->digits[i+j] = mult - carry*BigInt::base;
+		}
+	}
+
+	//Вычисляем размер получившегося числа
+	int size = left.size + right.size;
+	while (size > 1 && result->digits[size-1] == 0)
+	{
+		size--;
+	}
+	
+	result->size = size;
+
 	return result;
 }

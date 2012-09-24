@@ -2,6 +2,7 @@
 #include "FileOperations.h"
 #include "TList.h"
 #include "BigInt.h"
+#include "UnitTestsHelper.h"
 
 void WriteDataToFile(char* fileName, TList<char>* string) 
 {
@@ -60,7 +61,7 @@ TEST(InputOutputTest, ShouldReadSimpleLongDigit)
 	
 	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234};
-	AssertDigits(digits, 4, bigInt);
+	UnitTestsHelper::AssertDigits(digits, bigInt);
 }
 
 TEST(InputOutputTest, ShouldReadLongDigitWithShortLastDigit)
@@ -70,7 +71,7 @@ TEST(InputOutputTest, ShouldReadLongDigitWithShortLastDigit)
 
 	ASSERT_EQ(5, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234, 1};
-	AssertDigits(digits, 5, bigInt);
+	UnitTestsHelper::AssertDigits(digits, bigInt);
 }
 
 TEST(InputOutputTest, ShouldReadLongDigitWithFirstZeros)
@@ -80,7 +81,7 @@ TEST(InputOutputTest, ShouldReadLongDigitWithFirstZeros)
 
 	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {6543, 9987, 5678, 1234};
-	AssertDigits(digits, 4, bigInt);
+	UnitTestsHelper::AssertDigits(digits, bigInt);
 }
 
 TEST(InputOutputTest, ShouldReadLongDigitWithZerosInTheMiddle)
@@ -90,9 +91,18 @@ TEST(InputOutputTest, ShouldReadLongDigitWithZerosInTheMiddle)
 
 	ASSERT_EQ(4, bigInt->size);
 	int digits[] = {43, 9007, 0, 100};
-	AssertDigits(digits, 4, bigInt);
+	UnitTestsHelper::AssertDigits(digits, bigInt);
 }
 
+TEST(InputOutputTest, ShouldReadZero)
+{
+	TList<char>* inputString = CreateInputString("00000", 5);
+	BigInt* bigInt = ReadBigInt(inputString);
+
+	ASSERT_EQ(1, bigInt->size);
+	int digits[] = {0};
+	UnitTestsHelper::AssertDigits(digits, bigInt);
+}
 
 TEST(InputOutputTest, ShouldPrintLongDigitWithZerosInside)
 {
@@ -110,6 +120,17 @@ TEST(InputOutputTest, ShouldPrintLongDigitOne)
 	BigInt bigInt;
 	bigInt.size = 1;
 	int digits[] = {43};
+	SetUpDigits(bigInt.digits, 1, digits);
+
+	FileOperations operations;
+	operations.PrintBigInt(&bigInt);
+}
+
+TEST(InputOutputTest, ShouldPrintZero)
+{
+	BigInt bigInt;
+	bigInt.size = 1;
+	int digits[] = {0};
 	SetUpDigits(bigInt.digits, 1, digits);
 
 	FileOperations operations;

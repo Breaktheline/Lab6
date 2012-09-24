@@ -9,6 +9,14 @@ BigInt* FileOperations::ReadBigInt(FILE* inputFile)
 		ch = fgetc(inputFile);
 	}
 
+	BigInt* bigInt = new BigInt();
+
+	if (ch == '\n')
+	{
+		bigInt->size = 1;
+		return bigInt;
+	}
+
 	char stringOfDigits[BigInt::maxDecDigitsCount];
 	int stringLength = 0;
 	while (ch != '\n')
@@ -19,8 +27,7 @@ BigInt* FileOperations::ReadBigInt(FILE* inputFile)
 	}
 
 	int digitLength = BigInt::baseDimentions;
-
-	BigInt* bigInt = new BigInt();
+	
 	int digitPosition = 0;
 	// с конца строки
 	for(int i = stringLength - 1; i >= 0; i -= digitLength)
