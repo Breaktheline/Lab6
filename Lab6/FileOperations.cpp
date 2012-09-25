@@ -27,7 +27,7 @@ BigInt* FileOperations::ReadBigInt(FILE* inputFile)
 	}
 
 	int digitLength = BigInt::baseDimentions;
-	
+
 	int digitPosition = 0;
 	// с конца строки
 	for(int i = stringLength - 1; i >= 0; i -= digitLength)
@@ -40,7 +40,7 @@ BigInt* FileOperations::ReadBigInt(FILE* inputFile)
 			digitLength += startOfDigit;
 			startOfDigit = 0;
 		}
-		
+
 		//—читываем число
 		char digitString[BigInt::baseDimentions];
 		for(int j = 0; j < digitLength; j++)

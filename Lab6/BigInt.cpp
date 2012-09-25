@@ -21,20 +21,20 @@ BigInt::BigInt(int digit)
 	size = 1;
 }
 
-bool BigInt::IsZero(const BigInt &digit)
+bool IsZero(const BigInt* digit)
 {
-	return digit.size == 1 && digit.digits[0] == 0;
+	return digit->size == 1 && digit->digits[0] == 0;
 }
 
-BigInt* operator+(const BigInt &left, const BigInt &right)
+BigInt* Add(const BigInt* left, const BigInt* right)
 {
 	BigInt* result = new BigInt();
-	int maxAmount = Max(left.size, right.size);
+	int maxAmount = Max(left->size, right->size);
 	int carry = 0;
 
 	for (int i = 0; i < maxAmount + carry; i++)
 	{
-		int sum = left.digits[i] + right.digits[i] + carry;
+		int sum = left->digits[i] + right->digits[i] + carry;
 
 		//Если результат операции сложения больше основания, будет остаток
 		if (sum >= BigInt::base)
@@ -54,16 +54,16 @@ BigInt* operator+(const BigInt &left, const BigInt &right)
 	return result;
 }
 
-bool operator==(const BigInt &left, const BigInt &right)
+bool AreEquals(const BigInt* left, const BigInt* right)
 {
-	if (left.size != right.size)
+	if (left->size != right->size)
 	{
 		return false;
 	}
 
-	for(int i = 0; i < left.size; i++)
+	for(int i = 0; i < left->size; i++)
 	{
-		if (left.digits[i] != right.digits[i])
+		if (left->digits[i] != right->digits[i])
 		{
 			return false;
 		}
@@ -72,54 +72,54 @@ bool operator==(const BigInt &left, const BigInt &right)
 	return true;
 }
 
-bool operator>(const BigInt &left, const BigInt &right)
+bool IsGreater(const BigInt* left, const BigInt* right)
 {
-	if (left.size != right.size)
+	if (left->size != right->size)
 	{
-		return left.size > right.size;
+		return left->size > right->size;
 	}
 
-	for(int i = left.size; i >= 0; i--)
+	for(int i = left->size; i >= 0; i--)
 	{
-		if (left.digits[i] != right.digits[i])
+		if (left->digits[i] != right->digits[i])
 		{
-			return left.digits[i] > right.digits[i];
+			return left->digits[i] > right->digits[i];
 		}
 	}
 
 	return false;
 }
 
-bool operator<(const BigInt &left, const BigInt &right)
+bool IsLess(const BigInt* left, const BigInt* right)
 {
-	if (left.size != right.size)
+	if (left->size != right->size)
 	{
-		return left.size < right.size;
+		return left->size < right->size;
 	}
 
-	for(int i = left.size; i >= 0; i--)
+	for(int i = left->size; i >= 0; i--)
 	{
-		if (left.digits[i] != right.digits[i])
+		if (left->digits[i] != right->digits[i])
 		{
-			return left.digits[i] < right.digits[i];
+			return left->digits[i] < right->digits[i];
 		}
 	}
 
 	return false;
 }
 
-BigInt* operator-(const BigInt &left, const BigInt &right)
+BigInt* Subtract(const BigInt* left, const BigInt* right)
 {
-	if (left < right)
+	if (IsLess(left, right))
 	{
 		throw AppException(ErrorMessages::ERROR);
 	}
 
 	BigInt* result = new BigInt();
 	int carry = 0;
-	for(int i = 0; i < left.size; i++)
+	for(int i = 0; i < left->size; i++)
 	{
-		int subtraction = left.digits[i] - right.digits[i] - carry;
+		int subtraction = left->digits[i] - right->digits[i] - carry;
 		if (subtraction >= 0)
 		{
 			result->digits[i] = subtraction;
@@ -132,29 +132,33 @@ BigInt* operator-(const BigInt &left, const BigInt &right)
 		}
 	}
 
-	int size = left.size;
-	while(size > 1 && result->digits[size-1] == 0)
-	{
-		size--;
-	}
-
-	result->size = size;
+	result->size = DeleteExtraZeros(left->size, result);
 	return result;
 }
 
-BigInt* operator*(const BigInt &left, const BigInt &right)
+BigInt* Multiply(const BigInt* left, const BigInt* right)
 {
+	if (left->size + right->size > BigInt::maxDigitsCount)
+	{
+		throw AppException(ErrorMessages::ERROR);
+	}
+
+	if (IsZero(left) || IsZero(right))
+	{
+		return new BigInt(0);
+	}
+
 	BigInt* result = new BigInt();
 
 	//Идем последовательно по каждой "цифре" второго числа
-	for (int i = 0; i < right.size; i++)
+	for (int i = 0; i < right->size; i++)
 	{
 		int carry = 0;
 		//Умножаем на каждую "цифру" первого числа с учетом переноса
-		for (int j = 0; j < left.size || carry > 0; j++)
+		for (int j = 0; j < left->size || carry > 0; j++)
 		{
 			// предыдущее значение в ячейке + произведение чисел + перенос от прошлого произведения
-			int mult = result->digits[i+j] + left.digits[j] * right.digits[i] + carry;
+			int mult = result->digits[i+j] + left->digits[j] * right->digits[i] + carry;
 			carry = mult / BigInt::base;
 			//вычитаем от произведение перенос
 			result->digits[i+j] = mult - carry*BigInt::base;
@@ -162,45 +166,32 @@ BigInt* operator*(const BigInt &left, const BigInt &right)
 	}
 
 	//Вычисляем размер получившегося числа
-	int size = left.size + right.size;
-	while (size > 1 && result->digits[size-1] == 0)
-	{
-		size--;
-	}
-	
-	result->size = size;
+	result->size = DeleteExtraZeros(left->size + right->size, result);
 
 	return result;
 }
 
-BigInt* operator*(const BigInt &left, int right)
+BigInt* Multiply(const BigInt* left, int right)
 {
 	BigInt* result = new BigInt();
 
 	int carry = 0;
 	//Умножаем короткое на каждую "цифру" первого числа с учетом переноса
-	for (int i = 0; i < left.size || carry > 0; i++)
+	for (int i = 0; i < left->size || carry > 0; i++)
 	{
 		// предыдущее значение в ячейке + произведение чисел + перенос от прошлого произведения
-		int mult = left.digits[i] * right + carry;
+		int mult = left->digits[i] * right + carry;
 		carry = mult / BigInt::base;
 		//вычитаем от произведение перенос
 		result->digits[i] = mult - carry*BigInt::base;
 	}
 
 	//Вычисляем размер получившегося числа
-	int size = left.size + 1;
-	while (size > 1 && result->digits[size-1] == 0)
-	{
-		size--;
-	}
-
-	result->size = size;
-
+	result->size = DeleteExtraZeros(left->size + 1, result);
 	return result;
 }
 
-int FindDivisor(BigInt &divident, const BigInt &divisor)
+int FindDivisor(BigInt** divident, const BigInt* divisor)
 {
 	int left = 0;
 	int right = BigInt::base;
@@ -210,8 +201,8 @@ int FindDivisor(BigInt &divident, const BigInt &divisor)
 	while (left <= right)
 	{
 		half = (left + right) / 2;
-		mult = divisor * half;
-		if (*mult > divident)
+		mult = Multiply(divisor, half);
+		if (IsGreater(mult, *divident))
 		{
 			right = half - 1;
 		}
@@ -219,57 +210,59 @@ int FindDivisor(BigInt &divident, const BigInt &divisor)
 		{
 			left = half + 1;
 		}
+
 		delete mult;
 	}
 
 	half = (left + right) / 2;
-	mult = divisor * half;
+	mult = Multiply(divisor, half);
 
-	divident = *(divident - *mult);
+	BigInt* oldDivident = *divident;
+	*divident = Subtract(*divident, mult);
+	delete oldDivident;
+
 	delete mult;
+
 	return half;
 }
 
-BigInt* operator/(const BigInt &left, const BigInt &right)
+void DeleteExtraZeros( BigInt* divident, BigInt* result );
+
+BigInt* Divide(const BigInt* left, const BigInt* right)
 {
-	if (BigInt::IsZero(right))
+	if (IsZero(right))
 	{
 		throw AppException(ErrorMessages::ERROR);
 	}
 
 	BigInt* result = new BigInt();
-	BigInt divident;
+	BigInt* divident = new BigInt();
 	//Движемся с начала числа
-	for (int i = left.size - 1; i >= 0; i--)
+	for (int i = left->size - 1; i >= 0; i--)
 	{
 		//Умножаем делимое на основание, сдвигая число
-		for(int j = divident.size; j > 0; j--)
+		for(int j = divident->size; j > 0; j--)
 		{
-			divident.digits[j] = divident.digits[j-1];
+			divident->digits[j] = divident->digits[j-1];
 		}
 		//Прибавляем следующую "цифру" к делимому
-		divident.digits[0] = left.digits[i];
-		divident.size++;
+		divident->digits[0] = left->digits[i];
+		divident->size++;
+		divident->size = DeleteExtraZeros(divident->size, divident);
 
-		result->digits[i] = FindDivisor(divident, right);
+		result->digits[i] = FindDivisor(&divident, right);
 	}
 
 	// избавляемся от лишних нулей
-	int size = left.size;
-	while (size > 1 && result->digits[size-1] == 0)
-	{
-		size--;
-	}
-	result->size = size;
-
+	result->size = DeleteExtraZeros(left->size, result);
 	return result;
 }
 
-BigInt* operator^(const BigInt &left, const BigInt &power)
+BigInt* Power(const BigInt* left, const BigInt* power)
 {
-	if (BigInt::IsZero(power))
+	if (IsZero(power))
 	{
-		if (BigInt::IsZero(left))
+		if (IsZero(left))
 		{
 			throw AppException(ErrorMessages::ERROR);
 		}
@@ -279,25 +272,48 @@ BigInt* operator^(const BigInt &left, const BigInt &power)
 
 	BigInt* result = new BigInt(1);
 
-	BigInt n = power;
-	BigInt digit = left;
-	BigInt zero(0);
-	while (1)
+	BigInt* n = new BigInt(*power);
+	BigInt* digit = new BigInt(*left);
+	BigInt* two = new BigInt(2);
+
+	while (true)
 	{
 		//Если число нечетное, то умножаем на число.
-		if (n.digits[0] & 1)
+		if (n->digits[0] & 1)
 		{
-			result = *result * digit;
+			BigInt* oldResult = result;
+			result = Multiply(result, digit);
+			delete oldResult;
 		}
-		n = *(n / 2);
 
-		if (BigInt::IsZero(n))
+		BigInt* oldN = n;
+		n = Divide(n, two);
+		delete oldN;
+
+		if (IsZero(n))
 		{
 			break;
 		}
 
-		digit = *(digit * digit);
+		BigInt* oldDigit = digit;
+		digit = Multiply(digit, digit);
+		delete oldDigit;
 	}
+
+	delete two;
+	delete n;
+	delete digit;
 
 	return result;
 }
+
+int DeleteExtraZeros(int startSize, BigInt* digit)
+{
+	int size = startSize;
+	while (size > 1 && digit->digits[size-1] == 0)
+	{
+		size--;
+	}
+	return size;
+}
+

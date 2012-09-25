@@ -21,7 +21,7 @@ TEST(AdditionTest, ShouldAddIfDigitsHasEqualSizeAndNoRemainder)
 	int rightDigits[] = {3210, 7654, 98};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left + right;
+	BigInt* result = Add(&left, &right);
 
 	ASSERT_EQ(3, result->size);
 	int expect[] = {2208, 2222, 222};
@@ -37,7 +37,7 @@ TEST(AdditionTest, ShouldAddIfDigitsHasEqualSizeAndRemainder)
 	int rightDigits[] = {3210, 7654, 9998};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left + right;
+	BigInt* result = Add(&left, &right);
 
 	ASSERT_EQ(4, result->size);
 	int expect[] = {2208, 2222, 122, 1};
@@ -54,7 +54,7 @@ TEST(AdditionTest, ShouldAddIfDigitsHasDiffSize)
 	int rightDigits[] = {3210, 7654, 9998, 67, 543};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left + right;
+	BigInt* result = Add(&left, &right);
 
 	ASSERT_EQ(5, result->size);
 	int expect[] = {2208, 2222, 122, 68, 543};
@@ -71,7 +71,7 @@ TEST(AdditionTest, ShouldAddIfDigitsHasZerosInResult)
 	int rightDigits[] = {999, 9999, 9};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left + right;
+	BigInt* result = Add(&left, &right);
 
 	ASSERT_EQ(3, result->size);
 	int expect[] = {1998, 0, 10};
@@ -88,7 +88,7 @@ TEST(AdditionTest, ShouldAddIfDigitsHasNoRemainders)
 	int rightDigits[] = {321, 231, 2};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left + right;
+	BigInt* result = Add(&left, &right);
 
 	ASSERT_EQ(3, result->size);
 	int expect[] = {444, 243, 2};
@@ -105,9 +105,9 @@ TEST(CompareTest, CompareIfDigitsAreEquals)
 	int rightDigits[] = {123, 45};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	ASSERT_EQ(true, left == right);
-	ASSERT_EQ(false, left > right);
-	ASSERT_EQ(false, left < right);
+	ASSERT_EQ(true, AreEquals(&left, &right));
+	ASSERT_EQ(false, IsGreater(&left, &right));
+	ASSERT_EQ(false, IsLess(&left, &right));
 }
 
 TEST(CompareTest, CompareIfDigitsHasDiffSizes)
@@ -120,9 +120,9 @@ TEST(CompareTest, CompareIfDigitsHasDiffSizes)
 	int rightDigits[] = {123, 45, 45};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	ASSERT_EQ(false, left == right);
-	ASSERT_EQ(false, left > right);
-	ASSERT_EQ(true, left < right);
+	ASSERT_EQ(false, AreEquals(&left, &right));
+	ASSERT_EQ(false, IsGreater(&left, &right));
+	ASSERT_EQ(true, IsLess(&left, &right));
 }
 
 TEST(CompareTest, CompareIfLeftDigitGreater)
@@ -135,9 +135,9 @@ TEST(CompareTest, CompareIfLeftDigitGreater)
 	int rightDigits[] = {123, 45, 45};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	ASSERT_EQ(false, left == right);
-	ASSERT_EQ(false, left > right);
-	ASSERT_EQ(true, left < right);
+	ASSERT_EQ(false, AreEquals(&left, &right));
+	ASSERT_EQ(false, IsGreater(&left, &right));
+	ASSERT_EQ(true, IsLess(&left, &right));
 }
 
 TEST(CompareTest, CompareIfLeftDigitLess)
@@ -150,9 +150,9 @@ TEST(CompareTest, CompareIfLeftDigitLess)
 	int rightDigits[] = {123, 45, 45};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	ASSERT_EQ(false, left == right);
-	ASSERT_EQ(true, left > right);
-	ASSERT_EQ(false, left < right);
+	ASSERT_EQ(false, AreEquals(&left, &right));
+	ASSERT_EQ(true, IsGreater(&left, &right));
+	ASSERT_EQ(false, IsLess(&left, &right));
 }
 
 TEST(SubtractionTest, CanSubtructIfEquals)
@@ -166,7 +166,7 @@ TEST(SubtractionTest, CanSubtructIfEquals)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left - right;
+	BigInt* result = Subtract(&left, &right);
 	int digits[] = {0};
 
 	ASSERT_EQ(1, result->size);
@@ -186,7 +186,7 @@ TEST(SubtractionTest, NotSubtructIfLeftDigitLess)
 
 	try
 	{
-		BigInt* result = left - right;
+		BigInt* result = Subtract(&left, &right);
 	}
 	catch (AppException e)
 	{
@@ -205,7 +205,7 @@ TEST(SubtractionTest, SubtructIfLeftDigitGreaterAndNoRemainder)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left - right;
+	BigInt* result = Subtract(&left, &right);
 	int digits[] = {101, 22, 1};
 
 	ASSERT_EQ(3, result->size);
@@ -224,7 +224,7 @@ TEST(SubtractionTest, SubtructIfLeftDigitGreaterAndHasRemainder)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left - right;
+	BigInt* result = Subtract(&left, &right);
 	int digits[] = {7431, 9876, 9};
 
 	ASSERT_EQ(3, result->size);
@@ -242,7 +242,7 @@ TEST(SubtractionTest, SubtructIfResultSizeIsLess)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left - right;
+	BigInt* result = Subtract(&left, &right);
 	int digits[] = {5631, 9876};
 
 	ASSERT_EQ(2, result->size);
@@ -260,7 +260,7 @@ TEST(MultiplicationTest, MultiplyIfMultsHasSameSizeAndNoCarry)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left * right;
+	BigInt* result = Multiply(&left, &right);
 	int digits[] = {1452, 957, 365, 73, 5};
 
 	ASSERT_EQ(5, result->size);
@@ -278,7 +278,7 @@ TEST(MultiplicationTest, MultiplyIfMultsHasSameSizeAndCarry)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left * right;
+	BigInt* result = Multiply(&left, &right);
 	int digits[] = {7519, 344, 7003, 6198, 8372, 9};
 
 	ASSERT_EQ(6, result->size);
@@ -296,7 +296,7 @@ TEST(MultiplicationTest, MultiplyIfMultsHasDiffSize)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left * right;
+	BigInt* result = Multiply(&left, &right);
 	int digits[] = {7519, 344, 3022, 3646, 8898, 885, 4};
 
 	ASSERT_EQ(7, result->size);
@@ -314,7 +314,7 @@ TEST(MultiplicationTest, MultiplyIfOneMultIsZero)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left * right;
+	BigInt* result = Multiply(&left, &right);
 	int digits[] = {0};
 
 	ASSERT_EQ(1, result->size);
@@ -329,7 +329,7 @@ TEST(ShortMultiplicationTest, MultiplyIfShort)
 	int leftDigits[] = {33, 12, 1};
 	SetDigits(&left, leftDigits);
 
-	BigInt* result = left * 45678;
+	BigInt* result = Multiply(&left, 45678);
 	int digits[] = {7374, 8286, 5732, 4};
 
 	ASSERT_EQ(4, result->size);
@@ -347,7 +347,7 @@ TEST(DivisionTest, DivideIfDividentIsLessThanDivisor)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {0};
 
 	ASSERT_EQ(1, result->size);
@@ -365,7 +365,7 @@ TEST(DivisionTest, DivideIfDividentAndDivisorAreEquals)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {1};
 
 	ASSERT_EQ(1, result->size);
@@ -383,7 +383,7 @@ TEST(DivisionTest, DivideIfDivisorIsShort)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {1708, 488};
 
 	ASSERT_EQ(2, result->size);
@@ -401,7 +401,7 @@ TEST(DivisionTest, DivideIfDivisorIsLong)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {682};
 
 	ASSERT_EQ(1, result->size);
@@ -419,7 +419,7 @@ TEST(DivisionTest, DivideIfDivisionResultIsLong)
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
 
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {5656, 3514, 11};
 
 	ASSERT_EQ(3, result->size);
@@ -438,12 +438,15 @@ TEST(DivisionTest, NotDivideIfDivisorIsZero)
 	SetDigits(&right, rightDigits);
 	try
 	{
-		BigInt* result = left / right;
+		BigInt* result = Divide(&left, &right);
 	}
 	catch (AppException e)
 	{
 		ASSERT_EQ("Error", e.GetMessage());
+		return;
 	}
+
+	ASSERT_FALSE(true);
 }
 
 TEST(DivisionTest, DivideIfDividentIsZero)
@@ -456,7 +459,7 @@ TEST(DivisionTest, DivideIfDividentIsZero)
 	int rightDigits[] = {123, 45, 678, 999};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left / right;
+	BigInt* result = Divide(&left, &right);
 	int digits[] = {0};
 
 	ASSERT_EQ(1, result->size);
@@ -473,7 +476,7 @@ TEST(PowerTest, PowerIfPowerIsShort)
 	int rightDigits[] = {5};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left ^ right;
+	BigInt* result = Power(&left, &right);
 	int digits[] = {6843, 8125, 6774, 2379, 8411, 1039};
 
 	ASSERT_EQ(6, result->size);
@@ -490,9 +493,74 @@ TEST(PowerTest, PowerIfPowerIsZero)
 	int rightDigits[] = {0};
 	SetDigits(&left, leftDigits);
 	SetDigits(&right, rightDigits);
-	BigInt* result = left ^ right;
+	BigInt* result = Power(&left, &right);
 	int digits[] = {1};
 
 	ASSERT_EQ(1, result->size);
 	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+
+TEST(PowerTest, PowerIfPowerIsBig)
+{
+	BigInt left, right;
+	left.size = 1;
+	right.size = 1;
+
+	int leftDigits[] = {99};
+	int rightDigits[] = {99};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	BigInt* result = Power(&left, &right);
+	int digits[] = {9899, 49, 1592, 9999, 9977, 3849, 9301, 6765, 606, 8071, 1441, 6440, 193, 2157, 4516, 4359, 6949, 9967,
+	9429, 4011, 3265, 9548, 7888, 9409, 2727, 2823, 101, 650, 2141, 5234, 5277, 7045, 5525, 2423, 5997, 4302, 1102, 8174, 
+	7642, 5668, 4059, 8054, 5628, 8790, 6571, 6772, 4972, 6376, 9729, 36};
+	FileOperations fileOperations;
+	fileOperations.PrintBigInt(result);
+
+	ASSERT_EQ(50, result->size);
+	UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(PowerTest, PowerIfNoOverflow)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 2;
+
+	int leftDigits[] = {9999, 9999};
+	int rightDigits[] = {5000, 2};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	BigInt* result = Power(&left, &right);
+	FileOperations fileOperations;
+	//fileOperations.PrintBigInt(result);
+
+	ASSERT_EQ(50000, result->size);
+	//UnitTestsHelper::AssertDigits(digits, result);
+}
+
+TEST(PowerTest, ErrorPowerIfOverflow)
+{
+	BigInt left, right;
+	left.size = 2;
+	right.size = 2;
+
+	int leftDigits[] = {9999, 9999};
+	int rightDigits[] = {5001, 2};
+	SetDigits(&left, leftDigits);
+	SetDigits(&right, rightDigits);
+	try
+	{
+		BigInt* result = Power(&left, &right);
+	}
+	catch(AppException ex)
+	{
+		ASSERT_EQ("Error", ex.GetMessage());
+		return;
+	}
+
+	ASSERT_FALSE(true);
+	//ASSERT_EQ(25002, result->size);
+	//UnitTestsHelper::AssertDigits(digits, result);
 }
