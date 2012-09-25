@@ -522,45 +522,45 @@ TEST(PowerTest, PowerIfPowerIsBig)
 	UnitTestsHelper::AssertDigits(digits, result);
 }
 
-TEST(PowerTest, PowerIfNoOverflow)
-{
-	BigInt left, right;
-	left.size = 2;
-	right.size = 2;
-
-	int leftDigits[] = {9999, 9999};
-	int rightDigits[] = {5000, 2};
-	SetDigits(&left, leftDigits);
-	SetDigits(&right, rightDigits);
-	BigInt* result = Power(&left, &right);
-	FileOperations fileOperations;
-	//fileOperations.PrintBigInt(result);
-
-	ASSERT_EQ(50000, result->size);
-	//UnitTestsHelper::AssertDigits(digits, result);
-}
-
-TEST(PowerTest, ErrorPowerIfOverflow)
-{
-	BigInt left, right;
-	left.size = 2;
-	right.size = 2;
-
-	int leftDigits[] = {9999, 9999};
-	int rightDigits[] = {5001, 2};
-	SetDigits(&left, leftDigits);
-	SetDigits(&right, rightDigits);
-	try
-	{
-		BigInt* result = Power(&left, &right);
-	}
-	catch(AppException ex)
-	{
-		ASSERT_EQ("Error", ex.GetMessage());
-		return;
-	}
-
-	ASSERT_FALSE(true);
-	//ASSERT_EQ(25002, result->size);
-	//UnitTestsHelper::AssertDigits(digits, result);
-}
+//TEST(PowerTest, PowerIfNoOverflow)
+//{
+//	BigInt left, right;
+//	left.size = 2;
+//	right.size = 2;
+//
+//	int leftDigits[] = {9999, 9999};
+//	int rightDigits[] = {5000, 2};
+//	SetDigits(&left, leftDigits);
+//	SetDigits(&right, rightDigits);
+//	BigInt* result = Power(&left, &right);
+//	FileOperations fileOperations;
+//	//fileOperations.PrintBigInt(result);
+//
+//	ASSERT_EQ(50000, result->size);
+//	//UnitTestsHelper::AssertDigits(digits, result);
+//}
+//
+//TEST(PowerTest, ErrorPowerIfOverflow)
+//{
+//	BigInt left, right;
+//	left.size = 2;
+//	right.size = 2;
+//
+//	int leftDigits[] = {9999, 9999};
+//	int rightDigits[] = {5001, 2};
+//	SetDigits(&left, leftDigits);
+//	SetDigits(&right, rightDigits);
+//	try
+//	{
+//		BigInt* result = Power(&left, &right);
+//	}
+//	catch(AppException ex)
+//	{
+//		ASSERT_EQ("Error", ex.GetMessage());
+//		return;
+//	}
+//
+//	ASSERT_FALSE(true);
+//	//ASSERT_EQ(25002, result->size);
+//	//UnitTestsHelper::AssertDigits(digits, result);
+//}
